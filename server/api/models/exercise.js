@@ -8,18 +8,12 @@ const exerciseSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    sets: {
-        type: Number,
-        required: true
-    },
-    repsPerSet: {
-        type: Number,
-        required: true
-    },
-    weightPerSet: {
-        type: Number,
-        required: false
-    },
+    sets: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Set',
+        //Make sure there is at least one set in here
+
+    }],
     muscleGroups: [{
         type: String,
         enum: MuscleGroups,
