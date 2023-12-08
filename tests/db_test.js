@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
-const { User, WorkoutProgram, Workout, Exercise } = require('../server/api/models/');
+const User = require("../server/api/models/user");
+const WorkoutProgram = require("../server/api/models/workoutProgram");
+const Workout = require("../server/api/models/workout");
+const Exercise = require("../server/api/models/exercise");
+const connectDB = require("../server/config/db");
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('Connected to MongoDB...'))
-    .catch(err => console.error('Could not connect to MongoDB...', err));
+
+connectDB()
 
 // Create and Save a New User with a Workout Plan
 async function createUserWithWorkout() {
@@ -21,7 +24,7 @@ async function createUserWithWorkout() {
     const workoutProgram = new WorkoutProgram({
         name: 'My First Workout Program',
         description: 'This is a test workout program.',
-        userId: user._id
+        createdBy: user._id
     });
 
     // Create a new workout
@@ -35,16 +38,16 @@ async function createUserWithWorkout() {
         name: 'Pushups',
         muscleGroup: 'Chest',
         sets: 3,
-        reps: 10,
-        weight: null
+        repsPerSet: 10,
+        weightPerSet: null
     });
 
     const curls = new Exercise({
         name: 'Bicep Curls',
         muscleGroup: 'Arms',
         sets: 3,
-        reps: 12,
-        weight: 20 // lbs
+        repsPerSet: 12,
+        weightPerSet: 20 // lbs
     });
 
     // Save exercises
@@ -52,14 +55,14 @@ async function createUserWithWorkout() {
     await curls.save();
 
     // Add exercises to the workout
-    workout.exercises.push(pushups);
-    workout.exercises.push(curls);
+    workout.exercises.push(pushups._id);
+    workout.exercises.push(curls._id);
 
     // Save the workout
     await workout.save();
 
     // Add the workout to the workout program
-    workoutProgram.workouts.push(workout);
+    workoutProgram.weeklySchedule.Monday.push(workout._id);
 
     // Save the workout program
     await workoutProgram.save();

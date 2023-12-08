@@ -13,12 +13,7 @@ const workoutSchema = new mongoose.Schema({
     exercises: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Exercise'
-    }],
-    createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    }
+    }]
 }, {
     timestamps: true // Automatically adds createdAt and updatedAt fields
 });
