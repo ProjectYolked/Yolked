@@ -2,20 +2,20 @@ const mongoose = require('mongoose');
 
 const SetType = ['weightlifting', 'cardio']
 
-const validateReps = value => this.type === 'weightlifting' ? value !== undefined : true;
+const validateReps = function(value) {
+    return this.type === 'weightlifting' ? value !== undefined : true;
+};
 
-const validateWeight = value => value === undefined || this.type === 'weightlifting';
-
-const validateMinutes = value => this.type === 'cardio' ? value !== undefined : true;
+const validateSeconds = function(value) {
+    return this.type === 'cardio' ? value !== undefined : true;
+};
 
 const validateRepsMessage = 'Weight lifting sets must contain reps';
 
-const validateWeightMessage = 'cardio cannot contain weight';
-
 const validateMinutesMessage = 'Cardio must contain minutes';
 
-
 //You can either have cardio with minutes or lifting with reps and weight with weight being optional
+//why not have cario with weight ie weighted planks or a weight vest. removing weight validation.
 const setSchema = new mongoose.Schema({
     type: {
         type: String,
@@ -31,15 +31,11 @@ const setSchema = new mongoose.Schema({
     },
     weight: {
         type: Number,
-        validate: {
-            validator: validateWeight,
-            message: validateWeightMessage
-        }
     },
-    minutes: {
+    seconds: {
         type: Number,
         validate: {
-            validator: validateMinutes,
+            validator: validateSeconds,
             message: validateMinutesMessage
         }
     }
