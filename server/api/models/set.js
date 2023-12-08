@@ -4,7 +4,7 @@ const SetType = ['weightlifting', 'cardio']
 
 const validateReps = value => this.type === 'weightlifting' ? value !== undefined : true;
 
-const validateWeight = value => this.type === 'cardio' ? value === undefined : false;
+const validateWeight = value => value === undefined || this.type === 'weightlifting';
 
 const validateMinutes = value => this.type === 'cardio' ? value !== undefined : true;
 
