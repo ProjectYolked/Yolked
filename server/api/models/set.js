@@ -15,7 +15,7 @@ const validateRepsMessage = 'Weight lifting sets must contain reps';
 const validateMinutesMessage = 'Cardio must contain minutes';
 
 //You can either have cardio with minutes or lifting with reps and weight with weight being optional
-//why not have cario with weight ie weighted planks or a weight vest. removing weight validation.
+//why not have cardio with weight ie weighted planks or a weight vest. removing weight validation.
 const setSchema = new mongoose.Schema({
     type: {
         type: String,
