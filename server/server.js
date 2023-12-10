@@ -2,7 +2,7 @@ const cors = require('cors');
 const express = require('express');
 const workoutProgramRoutes = require('./api/routes/workoutProgramRoutes');
 const workoutRoutes = require('./api/routes/workoutRoutes');
-const userRoutes = require('./api/routes/userRoutes'); // Corrected import
+const userRoutes = require('./api/routes/userRoutes');
 const connectDB = require('./config/db');
 
 // Connect to Database
