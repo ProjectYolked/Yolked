@@ -15,7 +15,7 @@ async function createUserWithWorkout() {
     const user = new User({
         username: 'johndoe',
         email: 'john@example.com',
-        password: 'hashedPassword' // Ensure this is hashed
+        password: 'password' // Ensure this is hashed
     });
 
     // Create a new workout program
