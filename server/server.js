@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const workoutProgramRoutes = require('./api/routes/workoutProgramRoutes');
 const workoutRoutes = require('./api/routes/workoutRoutes');
@@ -11,6 +12,7 @@ const startServer = async () => {
         console.log('Database connected successfully');
 
         const app = express();
+        app.use(cors());
 
         app.use(express.json()); // Needed to parse JSON bodies
 

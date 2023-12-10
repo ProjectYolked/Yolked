@@ -24,7 +24,7 @@ This project follows the MERN stack architecture. Here's the overview of the pro
         - `/utils`: Utility functions.
         - `/services`: API service calls.
         - `App.jsx`: Main React application entry.
-        - `index.js`: Root JavaScript file.
+        - `main.jsx`: Root JavaScript file.
 
 ### Server Directory (Node.js/Express Backend)
 
