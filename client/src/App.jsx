@@ -1,5 +1,5 @@
 import React from 'react';
-import UserFetcher from './components/UserFetcher';
+import UserFetcher from './components/UserFetcher.jsx';
 
 function App() {
     return (
