@@ -5,17 +5,24 @@ import LoginHomePage from './pages/LoginHomePage.jsx';
 import SignupPage from "./pages/SignupPage.jsx";
 import HomePage from './pages/HomePage';
 import ProtectedRoute from './components/ProtectedRoute';
+import {ThemeProvider} from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import {lightTheme, darkTheme} from "./utils/theme.js";
 // Import other necessary components and pages
 
 function App() {
+    const darkMode = useMediaQuery('(prefers-color-scheme: dark)');
+    const theme = darkMode ? darkTheme : lightTheme;
+
     return (
+        <ThemeProvider theme={theme}>
         <CssBaseline>
         <BrowserRouter>
             <div>
                 {/* TODO Header, Navigation, and other layout components can go here */}
 
                 <Routes>
-                    <Route path="/login" element={<LoginHomePage />} />
+                    <Route path="/login" element={<LoginHomePage theme={theme} />} />
                     <Route path="/signup" element={<SignupPage />} />
                     <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
                     {/* TODO add a default route for a 404 Not Found page */}
@@ -25,6 +32,8 @@ function App() {
             </div>
         </BrowserRouter>
         </CssBaseline>
+        </ThemeProvider>
+
     );
 }
 
