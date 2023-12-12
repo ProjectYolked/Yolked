@@ -19,7 +19,6 @@ This project follows the MERN stack architecture. Here's the overview of the pro
         - `/components`: Reusable UI components.
         - `/pages`: Components for entire pages.
         - `/hooks`: Custom React hooks.
-        - `/context`: State management using Context API.
         - `/assets`: Static files (images, stylesheets).
         - `/utils`: Utility functions.
         - `/services`: API service calls.
@@ -33,6 +32,11 @@ This project follows the MERN stack architecture. Here's the overview of the pro
         - `/controllers`: Request handling functions.
         - `/models`: MongoDB models (schemas).
         - `/routes`: API routing.
-    - `/config`: Server configurations.
+    - `/config`: Server configurations (db).
     - `/utils`: Backend utilities.
     - `server.js`: Main server entry point.
+
+## Getting Started
+- Navigate to the root directory and run 'npm install' to install server dependencies
+- Navigate to client directory and run 'npm install' to install server dependencies
+- Navigate to the root director and run 'npm run dev' to compile the server and run the client.
