@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true,
         unique: true,
+        lowercase: true,
         minlength: 3
     },
     email: {
@@ -21,6 +22,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 6
+    },
+    firstName: {
+        type: String,
+        required: true,
+        trim: true,
+        unique: false,
+    },
+    lastName: {
+        type: String,
+        required: false,
+        trim: true,
+        unique: false,
     },
     programs: [{
         type: mongoose.Schema.Types.ObjectId,
