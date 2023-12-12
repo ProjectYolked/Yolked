@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Grid, Button, Typography, Paper, Box, CssBaseline, GlobalStyles, useTheme} from '@mui/material';
+import {Grid, Button, Typography, Paper, Box, CssBaseline, useTheme} from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import axios from 'axios';
 import  '../../css/pages/LoginPage.css'
@@ -74,7 +74,7 @@ const LoginHomePage = () => {
                             fontSize: '1rem',
                             fontWeight: 500,
                             fontFamily: '"Roboto", sans-serif' }}
-                                onClick={() => navigate('/user-login')}>
+                                onClick={() => navigate('/signin')}>
                             Log in
                         </Button>
                         <Button variant="contained" color="primary" sx={{ textTransform: 'none',

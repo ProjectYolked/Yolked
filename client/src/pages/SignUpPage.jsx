@@ -15,7 +15,7 @@ import {useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 
-const SignupPage = () => {
+const SignUpPage = () => {
     const [serverError, setServerError] = useState('');
     const theme = useTheme();
     const navigate = useNavigate();
@@ -176,7 +176,7 @@ const SignupPage = () => {
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="#" variant="body2" color={theme.palette.primary.main}>
+                                <Link href="/signin" variant="body2" color={theme.palette.primary.main}>
                                     Already have an account? Sign in
                                 </Link>
                             </Grid>
@@ -188,4 +188,4 @@ const SignupPage = () => {
     );
 };
 
-export default SignupPage;
+export default SignUpPage;
