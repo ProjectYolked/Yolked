@@ -2,19 +2,18 @@ import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import {ThemeProvider } from '@mui/material/styles';
-import theme from "../utils/theme.js";
+import {useTheme} from "@mui/material";
 
 const SignupPage = () => {
-
+    const theme = useTheme();
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -25,7 +24,16 @@ const SignupPage = () => {
     };
 
     return (
-        <ThemeProvider theme={theme}>
+        <Box
+            sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '100vh', // Full height of the viewport
+                width: '100vw', // Full width to ensure the Container is centered horizontally
+                boxSizing: 'border-box', // Ensures padding and border are included in the width and height
+            }}
+        >
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
                 <Box
@@ -86,12 +94,6 @@ const SignupPage = () => {
                                     autoComplete="new-password"
                                 />
                             </Grid>
-                            <Grid item xs={12}>
-                                <FormControlLabel
-                                    control={<Checkbox value="allowExtraEmails" color="primary" />}
-                                    label="I want to receive inspiration, marketing promotions and updates via email."
-                                />
-                            </Grid>
                         </Grid>
                         <Button
                             type="submit"
@@ -103,7 +105,7 @@ const SignupPage = () => {
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="#" variant="body2">
+                                <Link href="#" variant="body2" color={theme.palette.primary.main}>
                                     Already have an account? Sign in
                                 </Link>
                             </Grid>
@@ -111,7 +113,7 @@ const SignupPage = () => {
                     </Box>
                 </Box>
             </Container>
-        </ThemeProvider>
+        </Box>
     );
 };
 
