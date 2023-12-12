@@ -18,27 +18,33 @@ exports.getUserById = async (req, res) => {
 
 // Controller function to log in user
 exports.loginUser = async function loginUser(req, res) {
-    const { username, password } = req.body;
+    const { identifier, password, rememberMe } = req.body; // 'identifier' can be either username or email
 
     try {
-        // Find the user by username
-        const user = await User.findOne({ username });
+        // Email validation regex
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const isEmail = emailRegex.test(identifier);
+        const query = isEmail ? { email: identifier } : { username: identifier };
+
+        const user = await User.findOne(query);
+
         if (!user) {
-            return res.status(401).send('User not found');
+            return res.status(401).send('Username or Password incorrect');
         }
 
-        // Compare provided password with the hashed password in the database
+        // Check password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(401).send('Invalid credentials');
+            return res.status(401).send('Username or Password incorrect');
         }
 
-        // User is authenticated, continue with login process
-        const token = jwt.sign({ userId: user._id }, 'YOUR_SECRET_KEY'); // Replace 'YOUR_SECRET_KEY' with your actual secret key
-        res.send({ token });
-
+        const expiresIn = rememberMe ? '30d' : '2h'; // 30 days vs 2 hours
+        const token = jwt.sign({ id: user._id }, "SECRET_KEY", { expiresIn });
+        // Send the token back to the client
+        res.json({ token });
     } catch (error) {
-        res.status(500).send('Server error');
+        console.error(error);
+        res.status(500).send('Internal Server Error');
     }
 };
 
