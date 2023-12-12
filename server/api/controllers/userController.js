@@ -40,5 +40,46 @@ exports.loginUser = async function loginUser(req, res) {
     } catch (error) {
         res.status(500).send('Server error');
     }
-}
-// Add more controller functions as needed for other user operations
+};
+
+// Controller function to sign up
+exports.signUpUser = async function signUpUser(req, res) {
+    // Destructure and validate the incoming data
+    const { email, username, password, firstName, lastName } = req.body;
+    if (!email || !username || !firstName || !password) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    try {
+        const lowerCaseUserName = username.toLowerCase();
+        const lowerCaseEmail = email.toLowerCase();
+
+        // Check if username already exists
+        let user = await User.findOne({ username: lowerCaseUserName });
+        if (user) {
+            return res.status(403).send('Username already taken!');
+        }
+
+        // Check if email already exists
+        user = await User.findOne({ email: lowerCaseEmail });
+        if (user) {
+            return res.status(403).send('An account with this email already exists!');
+        }
+        // Create a new user instance
+        const newUser = new User({
+            email: lowerCaseEmail,
+            username: lowerCaseUserName,
+            password: password,
+            firstName: firstName,
+            lastName: lastName
+        });
+
+        // Save the user to the database
+        await newUser.save();
+        res.status(201).json({ message: 'User created', username });
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send('Server error');
+    }
+};
