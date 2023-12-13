@@ -2,8 +2,6 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CssBaseline } from '@mui/material';
 import LoginHomePage from './pages/LoginHomePage.jsx';
-import SignUpForm from "./components/SignUpForm.jsx";
-import SignInForm from './components/SignInForm.jsx'
 import HomePage from './pages/HomePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import {ThemeProvider} from "@mui/material/styles";

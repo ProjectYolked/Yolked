@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Grid, Button, Typography, Paper, Box, CssBaseline, useTheme} from '@mui/material';
+import {Grid, Button, Typography, Paper, Box, CssBaseline, useTheme, alpha} from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import  '../../css/pages/LoginPage.css'
 import { useNavigate } from 'react-router-dom';
@@ -19,28 +19,45 @@ const LoginHomePage = () => {
     };
     // Function to toggle to signup form
     const showSignUpForm = () => {
-        setActiveForm('login');
+        setActiveForm('signup');
     };
 
     return (
         <Grid container component="main" sx={{ height: '100vh', width: '100vw', overflow: 'hidden' }}>
             <CssBaseline />
             {!hideOnSmallScreens && (
-                <Grid item md={6} lg={7} sx={{ backgroundColor: theme.palette.background.default }}>
+                <Grid item md={6} lg={7} sx={{ position: 'relative' }}>
+                    {/* Video Background */}
+                    <video autoPlay loop muted style={{ width: '100%', height: '100%', objectFit: 'cover' }}>
+                        <source src="https://storage.cloud.google.com/yolked-assets/WorkoutMontage.mp4" type="video/mp4" /> {/* TODO migrate to CDN */}
+                        Your browser does not support the video tag.
+                    </video>
+
+                    {/* Semi-Transparent Overlay */}
                     <Box
                         sx={{
-                            my: 3,
-                            mx: 4,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            backgroundColor: alpha(theme.palette.background.default, 0.77)
+                        }}
+                    />
+
+                    {/* Text in the Top Left Corner */}
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '24px', // Adjust top and left values as needed
+                            left: '32px',
+                            zIndex: 2, // Ensure the text is above the overlay and video
                         }}
                     >
-                        {/* Changed Typography to use color from the theme */}
                         <Typography variant="h1" color="textSecondary" gutterBottom>
                             Yolked
                         </Typography>
-                        {/* Place for more content or decorative elements */}
+                        {/* Additional content if needed */}
                     </Box>
                 </Grid>
             )}
