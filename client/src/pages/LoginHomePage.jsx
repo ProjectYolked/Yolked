@@ -1,34 +1,25 @@
 import React, { useState } from 'react';
 import {Grid, Button, Typography, Paper, Box, CssBaseline, useTheme} from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import axios from 'axios';
 import  '../../css/pages/LoginPage.css'
 import { useNavigate } from 'react-router-dom';
-
+import SignInForm from "../components/SignInForm.jsx";
+import SignUpForm from "../components/SignUpForm.jsx";
 
 const LoginHomePage = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [activeForm, setActiveForm] = useState('none');
     const navigate = useNavigate();
     const theme = useTheme();
     const hideOnSmallScreens = useMediaQuery(theme.breakpoints.down('md'));
 
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setErrorMessage('');
-        try {
-            const { data } = await axios.post('/api/login', { username, password });
-            localStorage.setItem('token', data.token);
-            navigate('/'); // Redirect to home page after login
-        } catch (error) {
-            if (error.response && error.response.status === 401) {
-                setErrorMessage('Incorrect username or password');
-            } else {
-                setErrorMessage('An error occurred. Please try again later.');
-            }
-        }
+    // Function to toggle to login form
+    const showLoginForm = () => {
+        setActiveForm('login');
+    };
+    // Function to toggle to signup form
+    const showSignUpForm = () => {
+        setActiveForm('login');
     };
 
     return (
@@ -54,6 +45,9 @@ const LoginHomePage = () => {
                 </Grid>
             )}
             <Grid item xs={12} sm={12} md={6} lg={5} component={Paper} elevation={6} square>
+                {activeForm === 'login' && <SignInForm switchToSignUp={showSignUpForm} />}
+                {activeForm === 'signup' && <SignUpForm switchToLogin={showLoginForm} />}
+                {activeForm === 'none' &&
                 <Box
                     sx={{
                         my: -6.8,
@@ -74,7 +68,7 @@ const LoginHomePage = () => {
                             fontSize: '1rem',
                             fontWeight: 500,
                             fontFamily: '"Roboto", sans-serif' }}
-                                onClick={() => navigate('/signin')}>
+                                onClick={() =>  setActiveForm('login')}>
                             Log in
                         </Button>
                         <Button variant="contained" color="primary" sx={{ textTransform: 'none',
@@ -82,11 +76,11 @@ const LoginHomePage = () => {
                             fontSize: '1rem',
                             fontWeight: 500,
                             fontFamily: '"Roboto", sans-serif' }}
-                                onClick={() => navigate('/signup')}>
+                                onClick={() => setActiveForm('signup')}>
                             Sign up
                         </Button>
                     </Box>
-                </Box>
+                </Box> }
             </Grid>
         </Grid>
     );

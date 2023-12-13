@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CssBaseline } from '@mui/material';
 import LoginHomePage from './pages/LoginHomePage.jsx';
-import SignUpPage from "./pages/SignUpPage.jsx";
-import SignInPage from './pages/SignInPage.jsx'
+import SignUpForm from "./components/SignUpForm.jsx";
+import SignInForm from './components/SignInForm.jsx'
 import HomePage from './pages/HomePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import {ThemeProvider} from "@mui/material/styles";
@@ -24,8 +24,6 @@ function App() {
 
                 <Routes>
                     <Route path="/login" element={<LoginHomePage theme={theme} />} />
-                    <Route path="/signup" element={<SignUpPage />} />
-                    <Route path="/signin" element={<SignInPage />} />
                     <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
                     {/* TODO add a default route for a 404 Not Found page */}
                 </Routes>
