@@ -2,6 +2,11 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CssBaseline } from '@mui/material';
 import LoginHomePage from './pages/LoginHomePage.jsx';
+<<<<<<< HEAD
+=======
+import SignUpPage from "./pages/SignUpPage.jsx";
+import SignInPage from './pages/SignInPage.jsx'
+>>>>>>> 5b41a96f4897999af88268144adf5efd7e23234a
 import HomePage from './pages/HomePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ThemeProvider } from "@mui/material/styles";
