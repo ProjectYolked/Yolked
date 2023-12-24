@@ -46,7 +46,9 @@ const SignUpForm = ({ switchToLogin }) => {
         let lastName = data.get('lastName')
 
         try {
-            await axios.post('/api/signup', { email, username, password, firstName, lastName });
+            const response = await axios.post('/api/signup', { email, username, password, firstName, lastName });
+            const token = response.data.token
+            localStorage.setItem('token', token)
             navigate('/'); // Redirect to home page after signup
         } catch (error) {
             const errorMsg = error.response?.data || 'An error occurred. Please try again later.';

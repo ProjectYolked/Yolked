@@ -19,6 +19,19 @@ exports.getUserById = async (req, res) => {
     }
 };
 
+exports.getUserProfile = async (req, res) => {
+    try {
+        logger.info(`routed`);
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        res.json(user);
+    } catch (error) {
+        console.error('Error in getUserProfile:', error);
+        res.status(500).send('Server Error');
+    }
+};
 // Controller function to log in user
 exports.loginUser = async function loginUser(req, res) {
     logger.info(`logging user in with ID: ${req.body.identifier}`);
@@ -89,7 +102,11 @@ exports.signUpUser = async function signUpUser(req, res) {
 
         // Save the user to the database
         await newUser.save();
-        res.status(201).json({ message: 'User created', username });
+        const expiresIn = '2h'; // Token expiration
+        const token = jwt.sign({ id: newUser._id }, "SECRET_KEY", { expiresIn });
+
+        // Send the token back to the client
+        res.status(201).json({ message: 'User created', token: token, username: lowerCaseUserName });
 
     } catch (error) {
         logger.error(error)
