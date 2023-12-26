@@ -7,21 +7,23 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { ThemeProvider } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { lightTheme, darkTheme } from "./utils/theme.js";
+import CreateProgramPage from "./pages/CreateProgramPage.jsx";
 // Import other necessary components and pages
 
 function App() {
     const darkMode = useMediaQuery('(prefers-color-scheme: dark)');
     const theme = darkMode ? darkTheme : lightTheme;
-
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline>
                 <BrowserRouter>
-                    <div>
+                    <div style={{ height: "100%", width: "100vw" }}>
                         {/* TODO Header, Navigation, and other layout components can go here */}
                         <Routes>
                             <Route path="/login" element={<LoginHomePage theme={theme} />} />
                             <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+                            <Route path="/create-program/:programId" element={<ProtectedRoute><CreateProgramPage /></ProtectedRoute>} />
+
                             {/* TODO add a default route for a 404 Not Found page */}
                         </Routes>
 

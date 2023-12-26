@@ -8,7 +8,6 @@ import SignUpForm from "../components/SignUpForm.jsx";
 
 const LoginHomePage = () => {
     const [activeForm, setActiveForm] = useState('none');
-    const navigate = useNavigate();
     const theme = useTheme();
     const hideOnSmallScreens = useMediaQuery(theme.breakpoints.down('md'));
 

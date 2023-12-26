@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import LogOutButton from '../components/LogOutButton.jsx';
 import axios from "axios";
 import User from "../models/User.js";
+import Sidebar from "../components/HomepageSidebar.jsx";
+import {Box} from "@mui/material";
 
 
 const HomePage = () => {
@@ -29,11 +31,14 @@ const HomePage = () => {
     }, []);
 
     return (
-        <div>
-            <LogOutButton />
-            <h1>Welcome to YOLKKED</h1>
-            <p>{user.displayInfo()}</p>
-        </div>
+        <Box display="flex">
+            <Sidebar />
+            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <LogOutButton />
+                <h1>Welcome to YOLKKED</h1>
+                <p>{user.displayInfo()}</p>
+            </Box>
+        </Box>
     );
 }
 

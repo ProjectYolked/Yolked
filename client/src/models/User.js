@@ -8,7 +8,7 @@ class User {
         this.programs = data.programs || [];
     }
     displayInfo() {
-        return `User: ${this.username}, Email: ${this.email}`;
+        return `User: ${this.username}, Email: ${this.email}, Programs: ${this.programs}`;
     }
 }
 

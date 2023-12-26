@@ -20,8 +20,8 @@ exports.getUserById = async (req, res) => {
 };
 
 exports.getUserProfile = async (req, res) => {
+    logger.info(`getting user info for ${req.user.id}`)
     try {
-        logger.info(`routed`);
         const user = await User.findById(req.user.id).select('-password');
         if (!user) {
             return res.status(404).send('User not found');
