@@ -6,18 +6,18 @@ export const lightTheme = createTheme({
             main: '#3c46ff', // Standard Issue Button blue
         },
         secondary: {
-            main: '#fc7500', // Dark blue
+            main: '#fc7500', // Orange
         },
         background: {
-            default: '#fdfdda', // Dark blue
-            paper: '#fdfdfd', // Black
+            default: '#fdfdda', // Cream White
+            paper: '#fdfdfd', // White
         },
         error: {
             main: '#f44336', //red
         },
         text: {
-            primary: '#000000', // White
-            secondary: '#fc7500', // Pink
+            primary: '#000000', // Black
+            secondary: '#fc7500', // Orange
         },
     },
     typography: {
@@ -46,7 +46,7 @@ export const darkTheme = createTheme({
         },
         background: {
             default: '#00002e', // Dark blue
-            paper: '#000000', // Black
+            paper: '#1B1B1B', // Black
         },
         error: {
             main: '#f44336', //red
@@ -54,6 +54,48 @@ export const darkTheme = createTheme({
         text: {
             primary: '#ffffff', // White
             secondary: '#d292ff', // Pink
+        },
+    },
+    components: {
+        MuiOutlinedInput: {
+            styleOverrides: {
+                root: {
+                    // Apply styles to the root of the OutlinedInput
+                    '& .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#ffffff', // White border
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                        borderColor: 'rgba(255, 255, 255, 0.5)', // Lighter white border on hover
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        borderColor: '#ffffff', // White border when focused
+                        borderWidth: '1px', // You can change the border width on focus
+                    },
+                },
+            },
+        },
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    borderColor: '#ffffff', // White border
+                    '&:hover': {
+                        borderColor: 'rgba(255, 255, 255, 0.5)', // Lighter white border on hover
+                        backgroundColor: 'rgba(255, 255, 255, 0.08)', // Optional: slight background color on hover
+                    },
+                    '&.Mui-focused': {
+                        borderColor: '#ffffff', // White border when focused
+                    },
+                },
+            },
+        },
+        MuiPaper: {
+            styleOverrides: {
+                root: {
+                    borderColor: '#ffffff', // White border color
+                    borderStyle: 'solid', // Style of the border
+                    borderWidth: '1px', // Width of the border
+                },
+            },
         },
     },
     typography: {

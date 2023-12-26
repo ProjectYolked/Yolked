@@ -3,13 +3,15 @@ import {Typography, TextField, IconButton, Grid, Paper, Box} from '@mui/material
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import Workout from "../models/Workout.js";
 import WorkoutProgram from "../models/WorkoutProgram.js";
 import Exercise from "../models/Exercise.js";
+import BackButton from "../components/BackButton.jsx";
 
 const CreateProgramPage = () => {
+    const navigate = useNavigate();
     const { programId } = useParams();
     const [program, setProgram] = useState(null);
     const [isAuthorized, setIsAuthorized] = useState(true); // State to track authorization
@@ -50,11 +52,11 @@ const CreateProgramPage = () => {
             }
             return processedWeek;
         });
-        const workoutProgam = new WorkoutProgram({ ...data, weeklySchedules });
+        const workoutProgram = new WorkoutProgram({ ...data, weeklySchedules });
         if(weeklySchedules.length === 0) {
-            workoutProgam.weeklySchedules.push(workoutProgam.createEmptyWeek())
+            workoutProgram.weeklySchedules.push(workoutProgram.createEmptyWeek())
         }
-        return workoutProgam
+        return workoutProgram
     };
 
     if (!program) {
@@ -65,6 +67,12 @@ const CreateProgramPage = () => {
     if (!isAuthorized) {
         return <div>Error: Invalid Workout Program</div>;
     }
+
+    const goToCreateWorkout = (index, day, workout) => {
+        const programData = {weekIndex: index, day: day, workout: workout}
+        console.log("navigating")
+        navigate(`/create-workout/${programId}`, { state: { programData } });
+    };
     const handleAddWeek = () => {
         const updatedProgram = new WorkoutProgram({...program});
 
@@ -74,7 +82,6 @@ const CreateProgramPage = () => {
         // Update the state with the new program
         setProgram(updatedProgram);
     };
-
     const handleRemoveWeek = (weekIndex) => {
         const updatedProgram = new WorkoutProgram({...program});
 
@@ -90,9 +97,16 @@ const CreateProgramPage = () => {
 
     return (
         <div style={{ padding: 20, height: "100%", alignSelf: "flex-start"}}>
-            <Typography variant="h4" gutterBottom>
-                Create Program
-            </Typography>
+            <Grid container spacing={0}>
+                <Grid item xs={.5}>
+                    <BackButton to={`/`}></BackButton>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                    <Typography variant="h4" gutterBottom>
+                        Create Program
+                    </Typography>
+                </Grid>
+            </Grid>
 
             <Grid container spacing={2}>
                 <Grid item xs={12} md={3}>
@@ -117,9 +131,6 @@ const CreateProgramPage = () => {
                         label="Program Description"
                         value={program.description}
                         onChange={(e) => setProgram({...program, description:event.target.value})}
-                        InputProps={{
-                            endAdornment: <EditIcon color="action" />
-                        }}
                         variant="outlined"
                         margin="normal"
                         multiline
@@ -154,7 +165,7 @@ const CreateProgramPage = () => {
                                         {week[day].length === 0
                                             ? (
                                                 <Box display="flex" justifyContent="center" alignItems="center" sx={{ flexGrow: 1 }}>
-                                                    <IconButton color="primary" onClick={handleAddWeek}>
+                                                    <IconButton color="primary" onClick={() => goToCreateWorkout(index, day, new Workout({}))}>
                                                         <AddCircleOutlineIcon fontSize="large" />
                                                     </IconButton>
                                                 </Box>
@@ -168,13 +179,15 @@ const CreateProgramPage = () => {
                     </Grid>
                 </Paper>
             ))}
-            <IconButton
-                color="primary"
-                onClick={handleAddWeek}
-                sx={{ marginTop: '15px' }} // Adjust the value as needed
-            >
-                <AddCircleOutlineIcon fontSize="large" />
-            </IconButton>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                <IconButton
+                    color="primary"
+                    onClick={handleAddWeek}
+                    sx={{ marginTop: '15px' }}
+                >
+                    <AddCircleOutlineIcon fontSize="large" />
+                </IconButton>
+            </div>
 
         </div>
     );
