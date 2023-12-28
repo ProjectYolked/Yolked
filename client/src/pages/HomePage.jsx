@@ -1,14 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import LogOutButton from '../components/LogOutButton.jsx';
 import axios from "axios";
 import User from "../models/User.js";
-import Sidebar from "../components/HomepageSidebar.jsx";
-import {Box} from "@mui/material";
+import Sidebar from "../components/nav/HomepageSidebar.jsx";
+import { Box } from "@mui/material";
+import useIsMobile from '../utils/useIsMobile.jsx';
+import MobileNavBar from '../components/nav/MobileNavBar.jsx';
 
 
 const HomePage = () => {
 
     const [user, setUser] = useState(new User({}));
+
+    const isMobile = useIsMobile();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -32,12 +36,13 @@ const HomePage = () => {
 
     return (
         <Box display="flex">
-            <Sidebar />
+            {!isMobile && <Sidebar />}
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <LogOutButton />
                 <h1>Welcome to YOLKKED</h1>
                 <p>{user.displayInfo()}</p>
             </Box>
+            {isMobile && <MobileNavBar />}
         </Box>
     );
 }
