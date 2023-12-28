@@ -1,14 +1,19 @@
 const jwt = require('jsonwebtoken');
-const {info} = require("../../config/logger");
+const { warn } = require('winston');
 
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
-    info(`token: ${token}`)
-    if (token == null) return res.sendStatus(401);
+    if (token == null) {
+        warn("Null token request");
+        return res.sendStatus(401);
+    }
 
     jwt.verify(token, "SECRET_KEY", (err, user) => {
-        if (err) return res.sendStatus(403);
+        if (err) {
+            warn(`Bad token ${token}`);
+            return res.sendStatus(403);
+        }
         req.user = user;
         next();
     });
