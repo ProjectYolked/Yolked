@@ -67,3 +67,20 @@ exports.deleteWorkout = async (req, res) => {
         res.status(500).send('Server error');
     }
 }
+
+exports.updateWorkout = async (req, res) => {
+    const workoutId = req.params.workoutId;
+    logger.info(workoutId)
+    const { name, description } = req.body; // Destructure only the needed fields
+    try {
+        const updatedWorkout = await Workout.findByIdAndUpdate(
+            workoutId,
+            { name, description }, // Update only these fields
+            { new: true }
+        );
+        res.json(updatedWorkout);
+    } catch (error) {
+        logger.error(error);
+        res.status(500).send('Server error');
+    }
+}

@@ -9,7 +9,10 @@ router.get('/workout/:id', workoutController.getWorkoutById);
 // POST request to create a new workout
 router.post('/create-workout/:programId', authenticateToken, workoutController.createEmptyWorkout);
 
-// Endpoint to delete a workout
+// PUT request to update a workout
+router.put('/workout/:workoutId', authenticateToken, workoutController.updateWorkout);
+
+// DELETE a workout
 router.delete('/workout/:id', authenticateToken, workoutController.deleteWorkout);
 
 module.exports = router;
