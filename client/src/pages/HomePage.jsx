@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import LogOutButton from '../components/LogOutButton.jsx';
 import axios from "axios";
 import User from "../models/User.js";
-import HomepageSidebar from "../components/HomepageSidebar.jsx";
+import HomepageSidebar from "../components/nav/HomepageSidebar.jsx";
 import { Box } from "@mui/material";
 import useIsMobile from '../utils/useIsMobile.jsx';
 import MobileNavBar from '../components/nav/MobileNavBar.jsx';
