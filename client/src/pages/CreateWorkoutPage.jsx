@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {Typography, TextField, IconButton, Grid, Paper, Box} from '@mui/material';
+import React, {createRef, useEffect, useRef, useState} from 'react';
+import {Typography, TextField, IconButton, Grid, Paper, Box, Button} from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
-import {useLocation, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import Workout from "../models/Workout.js";
 import WorkoutProgram from "../models/WorkoutProgram.js";
@@ -13,10 +13,9 @@ import BackButton from "../components/BackButton.jsx";
 import CreateExerciseCard from "../components/CreateExerciseCard.jsx";
 
 const CreateWorkoutPage = () => {
+    const navigate = useNavigate();
     const [workout, setWorkout] = useState(new Workout({}));
-    const [weekIndex, setWeekIndex] = useState(0);
-    const [day, setDay] = useState('');
-
+    const exerciseRefs = useRef([]);
     const [isAuthorized, setIsAuthorized] = useState(true); // State to track authorization
     const { programId } = useParams();
     const location = useLocation();
@@ -27,18 +26,6 @@ const CreateWorkoutPage = () => {
         if (programData === undefined) {
             setIsAuthorized(false)
             return
-        }
-        // Check if programData.weekIndex is available before setting
-        if (programData.weekIndex) {
-            setWeekIndex(programData.weekIndex);
-        } else {
-            setWeekIndex('')
-        }
-        // Check if programData.day is available before setting
-        if (programData.day) {
-            setDay(programData.day);
-        } else {
-            setDay('')
         }
         // Check if programData.workout is available before setting
         if (programData.workout) {
@@ -51,6 +38,12 @@ const CreateWorkoutPage = () => {
         // You can use weekIndex and day here as needed
 
     }, [programData]); // Dependency array includes programData
+
+    // Update refs array whenever the workout.exercises array changes
+    useEffect(() => {
+        // Adjust the refs array to match the number of exercises
+        exerciseRefs.current = workout.exercises.map((_, i) => exerciseRefs.current[i] || createRef());
+    }, [workout.exercises]);
 
     if (!isAuthorized) {
         return <div>Error: You do not own the workout program you are trying to modify</div>;
@@ -121,10 +114,24 @@ const CreateWorkoutPage = () => {
 
             if (response.ok) {
                 console.log('Exercise removed from workout and deleted successfully');
-                // Additional logic to update UI after successful operation
             } else {
                 console.error('Failed to remove and delete exercise');
             }
+        } catch (error) {
+            console.error('Error removing and deleting exercise:', error);
+        }
+    };
+
+    const updateWorkout = async() => {
+        const token = localStorage.getItem('token');
+        try {
+            await fetch(`/api/workout/${workout.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(workout)
+            });
         } catch (error) {
             console.error('Error removing and deleting exercise:', error);
         }
@@ -148,6 +155,16 @@ const CreateWorkoutPage = () => {
 
         await updateExercise(exercise);
     };
+
+    const handlePublishWorkout = async () => {
+        exerciseRefs.current.forEach(ref => {
+            if (ref.current && ref.current.editMode) {
+                ref.current.triggerDone();
+            }
+        });
+        await updateWorkout();
+        navigate(`/create-program/${programId}`)
+    }
 
     const handleRemoveExercise = async (exerciseIndex) => {
         const updatedWorkout = new Workout({...workout});
@@ -209,6 +226,8 @@ const CreateWorkoutPage = () => {
             {workout.exercises.map( (exercise, exerciseIndex) => (
                 <Paper key={exerciseIndex} style={{ paddingLeft: 25, paddingTop: 10, paddingBottom: 10, paddingRight: 10, marginTop: 10 }}>
                     <CreateExerciseCard
+                        key={exerciseIndex}
+                        ref={exerciseRefs[exerciseIndex]}
                         onExerciseComplete={handlePublishExercise}
                         handleRemoveExercise={handleRemoveExercise}
                         index={exerciseIndex} exerciseName={exercise.name}
@@ -220,7 +239,17 @@ const CreateWorkoutPage = () => {
             <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                 <CreateExerciseModal onExerciseSelect={handleSelectExercise}></CreateExerciseModal>
             </div>
-
+            {/* Done Button */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%', marginTop: 'auto' }}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handlePublishWorkout}
+                    style={{ marginRight: 20, marginBottom: 20 }}
+                >
+                    Done
+                </Button>
+            </div>
         </div>
     );
 };

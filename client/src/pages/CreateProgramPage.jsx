@@ -70,29 +70,6 @@ const CreateProgramPage = () => {
         return <div>Error: Invalid Workout Program</div>;
     }
 
-    const updateProgramDB = async (updatedProgram) => {
-        // PUT updated program to database
-        const token = localStorage.getItem('token');
-        try {
-            const response = await fetch('/api/workout-program/' + programId, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(updatedProgram)
-            });
-
-            if (response.ok) {
-                console.log('Program updated successfully');
-            } else {
-                console.error('Failed to update program');
-            }
-        } catch (error) {
-            console.error('Error updating program:', error);
-        }
-    }
-
     const editExistingWorkout = (index, day, workout) => {
         const programData = {weekIndex: index, day: day, workout: workout}
         console.log("navigating")
@@ -114,6 +91,7 @@ const CreateProgramPage = () => {
             console.error('Error creating workout:', error);
         }
     };
+
     const handleAddWeek = () => {
         const updatedProgram = new WorkoutProgram({...program});
 
@@ -144,7 +122,6 @@ const CreateProgramPage = () => {
         }
     };
 
-
     const handleDialogClose = () => {
         setIsDialogOpen({isOpen: false, weekIndex: -1});
     };
@@ -162,7 +139,6 @@ const CreateProgramPage = () => {
             setProgram(updatedProgram);
         }
         setIsDialogOpen({isOpen: false, weekIndex: -1});
-        updateProgramDB(program)
     };
 
     const handleRemoveWeek = (weekIndex) => {

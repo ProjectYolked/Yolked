@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {forwardRef, useImperativeHandle, useState} from 'react';
 import {
     Grid,
     IconButton,
@@ -17,7 +17,7 @@ import Set from "../models/Set.js";
 import Exercise from "../models/Exercise.js";
 import EditIcon from "@mui/icons-material/Edit";
 
-const CreateExerciseCard = ({index, exerciseName, exerciseType, handleRemoveExercise, onExerciseComplete }) => {
+const CreateExerciseCard = forwardRef(({ index, exerciseName, exerciseType, handleRemoveExercise, onExerciseComplete }, ref) => {
     const [sets, setSets] = useState([]);
     const [editMode, setEditMode] = useState(true);
 
@@ -42,6 +42,12 @@ const CreateExerciseCard = ({index, exerciseName, exerciseType, handleRemoveExer
         const exercise = new Exercise({name: exerciseName, sets: sets, muscleGroups: []});
         onExerciseComplete(exercise, index);
     }
+
+    // Expose handleDone to parent component
+    useImperativeHandle(ref, () => ({
+        triggerDone: handleDone,
+        editMode: editMode
+    }));
 
     return (
         <div>
@@ -133,6 +139,6 @@ const CreateExerciseCard = ({index, exerciseName, exerciseType, handleRemoveExer
             }
         </div>
     );
-};
+});
 
 export default CreateExerciseCard;

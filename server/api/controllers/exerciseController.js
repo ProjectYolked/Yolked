@@ -5,13 +5,10 @@ const Workout = require("../models/workout");
 // Controller function to post an exercise
 exports.createExercise = async (req, res) => {
     const workoutId = req.params.workoutId;
-    logger.info("workoutId:", workoutId);
-
     try {
         // Create a new Exercise
         const newExercise = new Exercise(req.body);
         await newExercise.save();
-        logger.info('Exercise saved with ID:', newExercise);
 
         // Update the Workout by adding the new Exercise's ID
         const updatedWorkout = await Workout.findByIdAndUpdate(

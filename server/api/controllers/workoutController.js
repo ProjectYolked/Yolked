@@ -67,3 +67,18 @@ exports.deleteWorkout = async (req, res) => {
         res.status(500).send('Server error');
     }
 }
+
+exports.updateWorkout = async (req, res) => {
+    const workoutId = req.params;
+    const workout = req.body;
+    try {
+        const updatedWorkout = await Workout.findByIdAndUpdate(
+            workoutId,
+            workout,
+            { new: true }
+        );
+        res.json(updatedWorkout);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+}
