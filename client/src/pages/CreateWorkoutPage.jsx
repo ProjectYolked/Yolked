@@ -76,7 +76,6 @@ const CreateWorkoutPage = () => {
     };
 
     const postExerciseAndUpdateWorkout = async (workoutId, exerciseData) => {
-        console.log("hello" + workoutId)
         const token = localStorage.getItem('token');
         try {
             const response = await fetch(`/api/exercise/${workoutId}`, {
@@ -124,11 +123,13 @@ const CreateWorkoutPage = () => {
 
     const updateWorkout = async() => {
         const token = localStorage.getItem('token');
+        console.log(JSON.stringify(workout))
         try {
             await fetch(`/api/workout/${workout.id}`, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(workout)
             });
@@ -142,6 +143,7 @@ const CreateWorkoutPage = () => {
         const updatedWorkout = new Workout({...workout});
         const parseExercise = new Exercise({name: exercise.title, sets: [], muscleGroups: []})
         parseExercise.id = await postExerciseAndUpdateWorkout(updatedWorkout.id, parseExercise)
+        console.log(parseExercise.id)
         updatedWorkout.exercises.push(parseExercise)
         // Update the state with the new workout
         setWorkout(updatedWorkout);
@@ -171,8 +173,8 @@ const CreateWorkoutPage = () => {
 
         // Remove the week at the specified index
         if (exerciseIndex >= 0 && exerciseIndex < updatedWorkout.exercises.length) {
-            updatedWorkout.exercises.splice(exerciseIndex, 1);
             await deleteExerciseFromWorkout(workout.exercises[exerciseIndex].id, updatedWorkout.id);
+            updatedWorkout.exercises.splice(exerciseIndex, 1);
         }
         // Update the state with the new program
         setWorkout(updatedWorkout);

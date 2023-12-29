@@ -39,11 +39,12 @@ const CreateProgramPage = () => {
         };
 
         fetchProgramData();
+        console.log(program)
     }, [programId]);
 
     const processProgramData = (data) => {
         // Iterate over weeklySchedules and instantiate Workout and Exercise objects
-        console.log(data)
+        console.log("running program processor for data:" + JSON.stringify(data))
         const weeklySchedules = data.weeklySchedules.map(week => {
             const processedWeek = {};
             for (const day in week) {
