@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user'); // Import the User model
 const logger = require('../../config/logger');
+const { error } = require('winston');
 
 // Controller function to get a user by ID
 exports.getUserById = async (req, res) => {
@@ -10,11 +11,12 @@ exports.getUserById = async (req, res) => {
         const user = await User.findOne({ username: req.params.id }).populate('programs');
 
         if (!user) {
-            logger.error(`Unable to find user with ID: ${req.params.id}`)
+            error(`Unable to find user with ID: ${req.params.id}`)
             return res.status(404).json({ message: 'User not found' });
         }
         res.json(user);
     } catch (error) {
+        error(`Error in getUserById trying to find user with ID: ${req.params.id}`);
         res.status(500).json({ message: error.message });
     }
 };
@@ -28,7 +30,7 @@ exports.getUserProfile = async (req, res) => {
         }
         res.json(user);
     } catch (error) {
-        console.error('Error in getUserProfile:', error);
+        error('Error in getUserProfile:', error);
         res.status(500).send('Server Error');
     }
 };
@@ -60,7 +62,7 @@ exports.loginUser = async function loginUser(req, res) {
         // Send the token back to the client
         res.json({ token });
     } catch (error) {
-        logger.error(error);
+        error(`Error logging user in with id ${req.body.identifier} ${error}`);
         res.status(500).send('Internal Server Error');
     }
 };
