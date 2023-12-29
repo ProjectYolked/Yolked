@@ -10,5 +10,7 @@ router.get('/draft-workout-program/:id', authenticateToken, workoutProgramContro
 
 router.post('/workout-program', authenticateToken, workoutProgramController.createEmptyProgram);
 
+//PUT request to update a workout program
+router.put('/workout-program/:id', authenticateToken, workoutProgramController.updateWorkoutProgram);
 
 module.exports = router;

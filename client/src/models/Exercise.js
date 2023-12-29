@@ -1,5 +1,6 @@
 class Exercise {
     constructor(data) {
+        this.id = data.id || null; // Store the MongoDB-generated ID
         this.name = data.name || '';
         this.sets = data.sets || []; // this will be an array of Set objects
         this.muscleGroups = data.muscleGroups || [];

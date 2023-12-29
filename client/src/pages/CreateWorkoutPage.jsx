@@ -10,6 +10,7 @@ import WorkoutProgram from "../models/WorkoutProgram.js";
 import Exercise from "../models/Exercise.js";
 import CreateExerciseModal from "../components/CreateExerciseModal.jsx";
 import BackButton from "../components/BackButton.jsx";
+import CreateExerciseCard from "../components/CreateExerciseCard.jsx";
 
 const CreateWorkoutPage = () => {
     const [workout, setWorkout] = useState(new Workout({}));
@@ -45,6 +46,7 @@ const CreateWorkoutPage = () => {
         } else {
             setWorkout(new Workout({}))
         }
+        console.log(programData)
 
         // You can use weekIndex and day here as needed
 
@@ -53,23 +55,108 @@ const CreateWorkoutPage = () => {
     if (!isAuthorized) {
         return <div>Error: You do not own the workout program you are trying to modify</div>;
     }
-    const handleAddExercise = (exercise) => {
-        const updatedWorkout = new Workout({...workout});
-        const parseExercise = new Exercise({name: exercise.name, sets: [], muscleGroups: []})
-        updatedWorkout.exercises.push(parseExercise)
 
+    const updateExercise = async (updatedExerciseData) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`/api/exercise/${updatedExerciseData.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedExerciseData)
+            });
+
+            if (response.ok) {
+                const updatedExercise = await response.json();
+                console.log('Exercise updated successfully:', updatedExercise);
+                return updatedExercise; // Return the updated exercise
+            } else {
+                console.error('Failed to update exercise');
+                return null;
+            }
+        } catch (error) {
+            console.error('Error updating exercise:', error);
+            return null;
+        }
+    };
+
+    const postExerciseAndUpdateWorkout = async (workoutId, exerciseData) => {
+        console.log("hello" + workoutId)
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`/api/exercise/${workoutId}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(exerciseData)
+            });
+
+            if (response.ok) {
+                const newExercise = await response.json();
+                console.log('Exercise created and added to workout:', newExercise);
+                return newExercise._id; // Return the ID of the new exercise
+            } else {
+                console.error('Failed to create exercise');
+                return null;
+            }
+        } catch (error) {
+            console.error('Error posting exercise:', error);
+            return null;
+        }
+    };
+
+    const deleteExerciseFromWorkout = async (exerciseId, workoutId) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`/api/exercise/${exerciseId}/${workoutId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                console.log('Exercise removed from workout and deleted successfully');
+                // Additional logic to update UI after successful operation
+            } else {
+                console.error('Failed to remove and delete exercise');
+            }
+        } catch (error) {
+            console.error('Error removing and deleting exercise:', error);
+        }
+    };
+
+    const handleSelectExercise = async (exercise) => {
+        console.log(exercise)
+        const updatedWorkout = new Workout({...workout});
+        const parseExercise = new Exercise({name: exercise.title, sets: [], muscleGroups: []})
+        parseExercise.id = await postExerciseAndUpdateWorkout(updatedWorkout.id, parseExercise)
+        updatedWorkout.exercises.push(parseExercise)
         // Update the state with the new workout
         setWorkout(updatedWorkout);
     };
 
-    const handleRemoveExercise = (exerciseIndex) => {
+    const handlePublishExercise = async (exercise, exerciseIndex) => {
+        console.log(exercise);
+        exercise.id = workout.exercises[exerciseIndex].id;
+        const updatedWorkout = new Workout({...workout});
+        updatedWorkout.exercises[exerciseIndex] = exercise;
+
+        await updateExercise(exercise);
+    };
+
+    const handleRemoveExercise = async (exerciseIndex) => {
         const updatedWorkout = new Workout({...workout});
 
         // Remove the week at the specified index
         if (exerciseIndex >= 0 && exerciseIndex < updatedWorkout.exercises.length) {
             updatedWorkout.exercises.splice(exerciseIndex, 1);
+            await deleteExerciseFromWorkout(workout.exercises[exerciseIndex].id, updatedWorkout.id);
         }
-
         // Update the state with the new program
         setWorkout(updatedWorkout);
     };
@@ -121,33 +208,17 @@ const CreateWorkoutPage = () => {
             </Grid>
             {workout.exercises.map( (exercise, exerciseIndex) => (
                 <Paper key={exerciseIndex} style={{ paddingLeft: 25, paddingTop: 10, paddingBottom: 10, paddingRight: 10, marginTop: 10 }}>
-                    <Grid container spacing={2} alignItems="center">
-                        <Grid item xs={6}>
-                            <Typography>{exerciseIndex + 1}. {exercise.name}</Typography>
-                        </Grid>
-                        <Grid item xs={6} style={{ textAlign: 'right' }}>
-                            <IconButton color="secondary" onClick={() => handleRemoveExercise(exerciseIndex)}>
-                                <RemoveCircleOutlineIcon />
-                            </IconButton>
-                        </Grid>
-
-                        {/* Placeholder for workout cards */}
-                        <Grid container spacing={2}>
-                            {exercise.sets.map((set, index) => (
-                                <Grid item key={index} xs={12} sm={6} md={4} lg={12/7}>
-                                    <Paper style={{ height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                        <Typography variant="h6" style={{ marginTop: '10px' }}>
-                                            {set}
-                                        </Typography>
-                                    </Paper>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </Grid>
+                    <CreateExerciseCard
+                        onExerciseComplete={handlePublishExercise}
+                        handleRemoveExercise={handleRemoveExercise}
+                        index={exerciseIndex} exerciseName={exercise.name}
+                        exerciseType={"weight"}>
+                    </CreateExerciseCard>
                 </Paper>
-            ))}
+
+                ))}
             <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-                <CreateExerciseModal>onExerciseSelect={handleAddExercise}</CreateExerciseModal>
+                <CreateExerciseModal onExerciseSelect={handleSelectExercise}></CreateExerciseModal>
             </div>
 
         </div>

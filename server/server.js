@@ -3,8 +3,8 @@ const express = require('express');
 const workoutProgramRoutes = require('./api/routes/workoutProgramRoutes');
 const workoutRoutes = require('./api/routes/workoutRoutes');
 const userRoutes = require('./api/routes/userRoutes');
+const exerciseRoutes = require('./api/routes/exerciseRoutes')
 const connectDB = require('./config/db');
-const morgan = require('morgan');
 const logger = require('./config/logger');
 
 // Connect to Database
@@ -25,6 +25,7 @@ const startServer = async () => {
         app.use('/api', userRoutes);
         app.use('/api', workoutProgramRoutes);
         app.use('/api', workoutRoutes);
+        app.use('/api', exerciseRoutes)
 
         const PORT = process.env.PORT || 5000;
         app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));

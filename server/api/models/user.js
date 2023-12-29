@@ -38,6 +38,14 @@ const userSchema = new mongoose.Schema({
     programs: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'WorkoutProgram'
+    }],
+    workouts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Workout'
+    }],
+    exercises: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Exercise'
     }]
 }, {
     timestamps: true // Automatically adds createdAt and updatedAt fields

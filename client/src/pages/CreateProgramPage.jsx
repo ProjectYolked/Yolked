@@ -9,8 +9,10 @@ import Workout from "../models/Workout.js";
 import WorkoutProgram from "../models/WorkoutProgram.js";
 import Exercise from "../models/Exercise.js";
 import BackButton from "../components/BackButton.jsx";
+import ConfirmDialog from "../components/ConfirmDialog.jsx";
 
 const CreateProgramPage = () => {
+    const [isDialogOpen, setIsDialogOpen] = useState({isOpen: false, weekIndex: -1});
     const navigate = useNavigate();
     const { programId } = useParams();
     const [program, setProgram] = useState(null);
@@ -68,10 +70,49 @@ const CreateProgramPage = () => {
         return <div>Error: Invalid Workout Program</div>;
     }
 
-    const goToCreateWorkout = (index, day, workout) => {
+    const updateProgramDB = async (updatedProgram) => {
+        // PUT updated program to database
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch('/api/workout-program/' + programId, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(updatedProgram)
+            });
+
+            if (response.ok) {
+                console.log('Program updated successfully');
+            } else {
+                console.error('Failed to update program');
+            }
+        } catch (error) {
+            console.error('Error updating program:', error);
+        }
+    }
+
+    const editExistingWorkout = (index, day, workout) => {
         const programData = {weekIndex: index, day: day, workout: workout}
         console.log("navigating")
         navigate(`/create-workout/${programId}`, { state: { programData } });
+    }
+
+    const goToCreateWorkout = async (index, day) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.post(`/api/create-workout/${programId}`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const programData = {weekIndex: index, day: day, workout: new Workout({id: response.data.id })}
+            console.log("navigating to create a new workout with id,", programData.workout.id)
+            navigate(`/create-workout/${programId}`, { state: { programData } });
+        } catch (error) {
+            console.error('Error creating workout:', error);
+        }
     };
     const handleAddWeek = () => {
         const updatedProgram = new WorkoutProgram({...program});
@@ -82,16 +123,67 @@ const CreateProgramPage = () => {
         // Update the state with the new program
         setProgram(updatedProgram);
     };
+
+    const deleteWorkout = async (workoutId) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch(`/api/workout/${workoutId}/${programId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                console.log('Workout deleted successfully');
+            } else {
+                console.error('Failed to delete workout');
+            }
+        } catch (error) {
+            console.error('Error deleting workout:', error);
+        }
+    };
+
+
+    const handleDialogClose = () => {
+        setIsDialogOpen({isOpen: false, weekIndex: -1});
+    };
+
+    const handleDialogConfirm = () => {
+        const updatedProgram = new WorkoutProgram({...program});
+        // Remove the week at the specified index
+        if (isDialogOpen.weekIndex >= 0 && isDialogOpen.weekIndex < updatedProgram.weeklySchedules.length) {
+            for (const day in updatedProgram.weeklySchedules[isDialogOpen.weekIndex]) {
+                for (const workout of updatedProgram.weeklySchedules[isDialogOpen.weekIndex][day]) {
+                    deleteWorkout(workout.id);
+                }
+            }
+            updatedProgram.weeklySchedules.splice(isDialogOpen.weekIndex, 1);
+            setProgram(updatedProgram);
+        }
+        setIsDialogOpen({isOpen: false, weekIndex: -1});
+        updateProgramDB(program)
+    };
+
     const handleRemoveWeek = (weekIndex) => {
         const updatedProgram = new WorkoutProgram({...program});
-
-        // Remove the week at the specified index
-        if (weekIndex >= 0 && weekIndex < updatedProgram.weeklySchedules.length) {
-            updatedProgram.weeklySchedules.splice(weekIndex, 1);
+        let workoutInWeek = false
+        // Check if the week to be deleted has workouts in it
+        for (const day in updatedProgram.weeklySchedules[weekIndex]) {
+            if (updatedProgram.weeklySchedules[weekIndex][day].length > 0) {
+                workoutInWeek = true
+            }
         }
 
-        // Update the state with the new program
-        setProgram(updatedProgram);
+        if (workoutInWeek) {
+            setIsDialogOpen({isOpen: false, weekIndex: weekIndex});
+        }
+        // Remove the week at the specified index
+        else if (weekIndex >= 0 && weekIndex < updatedProgram.weeklySchedules.length) {
+            updatedProgram.weeklySchedules.splice(weekIndex, 1);
+            // Update the state with the new program
+            setProgram(updatedProgram);
+        }
     };
 
 
@@ -152,6 +244,13 @@ const CreateProgramPage = () => {
                                 <RemoveCircleOutlineIcon />
                             </IconButton>
                         </Grid>
+                        <ConfirmDialog
+                            open={isDialogOpen.isOpen}
+                            onClose={handleDialogClose}
+                            onConfirm={handleDialogConfirm}
+                            title="Confirm Delete"
+                            message="Are you sure you want to delete this week of workouts?"
+                        />
 
                         {/* Placeholder for workout cards */}
                         <Grid container spacing={2}>
@@ -165,7 +264,7 @@ const CreateProgramPage = () => {
                                         {week[day].length === 0
                                             ? (
                                                 <Box display="flex" justifyContent="center" alignItems="center" sx={{ flexGrow: 1 }}>
-                                                    <IconButton color="primary" onClick={() => goToCreateWorkout(index, day, new Workout({}))}>
+                                                    <IconButton color="primary" onClick={() => goToCreateWorkout(index, day)}>
                                                         <AddCircleOutlineIcon fontSize="large" />
                                                     </IconButton>
                                                 </Box>

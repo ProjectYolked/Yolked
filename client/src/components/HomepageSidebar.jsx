@@ -8,7 +8,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
-const Sidebar = () => {
+const HomepageSidebar = () => {
   const navigate = useNavigate();
   const handleCreateProgram = async () => {
     const token = localStorage.getItem('token');
@@ -21,7 +21,7 @@ const Sidebar = () => {
       const programId = response.data.id;
       navigate(`/create-program/${programId}`);
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Error creating program data:', error);
     }
   }
   return (
@@ -72,4 +72,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default HomepageSidebar;

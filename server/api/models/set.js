@@ -41,6 +41,4 @@ const setSchema = new mongoose.Schema({
     }
 });
 
-const Set = mongoose.model('Set', setSchema);
-
-module.exports = Set;
+module.exports = setSchema;
