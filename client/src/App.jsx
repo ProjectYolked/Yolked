@@ -9,6 +9,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { lightTheme, darkTheme } from "./utils/theme.js";
 import CreateProgramPage from "./pages/CreateProgramPage.jsx";
 import CreateWorkoutPage from "./pages/CreateWorkoutPage.jsx";
+import History from './pages/History.jsx';
 // Import other necessary components and pages
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
                             <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
                             <Route path="/create-program/:programId" element={<ProtectedRoute><CreateProgramPage /></ProtectedRoute>} />
                             <Route path="/create-workout/:programId" element={<ProtectedRoute><CreateWorkoutPage /></ProtectedRoute>} />
+                            <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
                             {/* TODO add a default route for a 404 Not Found page */}
                         </Routes>
 
