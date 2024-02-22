@@ -10,11 +10,11 @@ router.get('/workout/:id', workoutController.getWorkoutById);
 // POST request to create a new workout
 router.post('/create-workout/:programId', authenticateToken, workoutController.createEmptyWorkout);
 
-// PUT request to update a workout
+// Endpoint to update a workout
 router.put('/workout/:workoutId', authenticateToken, workoutController.updateWorkout);
 
-// DELETE a workout
-router.delete('/workout/:id', authenticateToken, workoutController.deleteWorkout);
+// Endpoint to delete a workout
+router.delete('/workout/:workoutId/:programId', authenticateToken, workoutController.deleteWorkout);
 
 router.get('/workout-history', authenticateToken, validateMonthQueryParam, validateYearQueryParam, workoutController.getWorkoutHistory);
 

@@ -92,6 +92,7 @@ const CreateExerciseCard = forwardRef(({ index, exerciseName, exerciseType, hand
                                     size="small"
                                     type="number"
                                     value={set.reps}
+                                    disabled={!editMode}
                                     onChange={(e) => handleInputChange(idx, 'reps', e.target.value)}
                                 />
                             </TableCell>
@@ -100,6 +101,7 @@ const CreateExerciseCard = forwardRef(({ index, exerciseName, exerciseType, hand
                                     size="small"
                                     type="number"
                                     value={set.weight}
+                                    disabled={!editMode}
                                     onChange={(e) => handleInputChange(idx, 'weight', e.target.value)}
                                 />
                             </TableCell>
@@ -109,22 +111,25 @@ const CreateExerciseCard = forwardRef(({ index, exerciseName, exerciseType, hand
                                         size="small"
                                         type="number"
                                         value={set.seconds}
+                                        disabled={!editMode}
                                         onChange={(e) => handleInputChange(idx, 'seconds ', e.target.value)}
 
                                     />
                                 </TableCell>
                             )}
                             <TableCell>
+                                {editMode &&
                                 <IconButton onClick={() => handleRemoveSet(idx)} color="secondary">
                                     <CloseIcon />
                                 </IconButton>
+                                }
                             </TableCell>
 
                         </TableRow>
                     ))}
                     <TableRow>
                         <TableCell colSpan={exerciseType === 'cardio' ? 5 : 4} style={{ textAlign: 'center' }}>
-                            <Button variant="outlined" onClick={addSet} sx={{ width: '80%' }}>
+                            <Button variant="outlined" disabled={!editMode} onClick={addSet} sx={{ width: '80%' }}>
                                 Add Set
                             </Button>
                         </TableCell>

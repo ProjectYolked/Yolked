@@ -1,31 +1,42 @@
 // File: /server/api/controllers/workoutProgramController.js
 
 const WorkoutProgram = require('../models/workoutProgram');
+const Workout = require('../models/workout')
 const User = require('../models/user');
 const logger = require('../../config/logger');
 
-// Controller function to get a workout program by ID
+// Controller to get a workout program by ID with populated workouts for each day
 exports.getWorkoutProgramById = async (req, res) => {
-    logger.info(`fetching workout program with Id ${req.params.id}`)
     try {
-        const workoutProgram = await WorkoutProgram.findById(req.params.id);
+        const workoutProgramId = req.params.id; // Assuming the ID is passed in the URL
+        let workoutProgram = await WorkoutProgram.findById(workoutProgramId);
 
         if (!workoutProgram) {
             return res.status(404).json({ message: 'Workout Program not found' });
         }
 
-        // Assuming your 'WorkoutProgram' model's 'weeklySchedule' is an array of objects
-        // where each object has days of the week as keys with ObjectId references to 'Workout' model
+        // Clone the workoutProgram object to modify it without affecting the original document
+        workoutProgram = JSON.parse(JSON.stringify(workoutProgram));
+
+        // Dynamically populate each day of the week with workout details
         for (const week of workoutProgram.weeklySchedules) {
             for (const day in week) {
-                await WorkoutProgram.populate(week, { path: `${day}`, model: 'Workout' });
+                // Ensure 'day' is actually a day of the week in your schema before populating
+                if (week.hasOwnProperty(day)) {
+                    // Populate each day with the corresponding workouts
+                    week[day] = await Promise.all(
+                        week[day].map(async (workoutId) =>
+                            Workout.findById(workoutId).populate('exercises')
+                        )
+                    );
+                }
             }
         }
 
         res.json(workoutProgram);
     } catch (error) {
-        res.status(500).json({ message: error.message });
-        logger.error(error)
+        console.error('Failed to get workout program', error);
+        res.status(500).json({ message: 'Failed to get workout program', error: error.message });
     }
 };
 

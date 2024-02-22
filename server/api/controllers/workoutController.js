@@ -48,6 +48,30 @@ exports.createEmptyWorkout = async (req, res) => {
     }
 };
 
+exports.updateWorkout = async (req, res) => {
+    const workoutId = req.params.workoutId;
+    const updatedWorkoutData = req.body;
+
+    try {
+        const workout = await Workout.findByIdAndUpdate(workoutId, updatedWorkoutData, {
+            new: true, // Returns the updated document
+            runValidators: true // Runs validators on the updated data
+        });
+
+        if (!workout) {
+            return res.status(404).json({message: 'Workout not found'});
+        }
+
+        res.json(workout);
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            res.status(400).json({message: error.message});
+        } else {
+            res.status(500).json({message: 'Error updating workout'});
+        }
+    }
+}
+
 exports.deleteWorkout = async (req, res) => {
     const { workoutId, programId } = req.params;
 
