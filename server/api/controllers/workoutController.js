@@ -21,18 +21,33 @@ exports.getWorkoutById = async (req, res) => {
 
 exports.createEmptyWorkout = async (req, res) => {
     const programId = req.params.programId;
+    const dayOfWeek = req.body.dayOfWeek; // Assuming day of week is passed in request body
+    const weekIndex = req.body.weekIndex;
+    // Validate dayOfWeek here as needed
+
+    logger.info(req.params);
+    logger.info(`Creating a workout for program ${programId} on ${dayOfWeek}`);
 
     try {
-        // Create a new Workout
-        const newWorkout = new Workout({name: "New Workout", description: "", dateCompleted: null, exercises: []});
+        // Create a new Workout with default values
+        const newWorkout = new Workout({
+            name: "New Workout",
+            description: "",
+            dateCompleted: null,
+            exercises: []
+        });
         await newWorkout.save();
 
-        // Link the workout to the workout program
-        await WorkoutProgram.findByIdAndUpdate(
+        // Construct the path for the day of the week in the first week's schedule
+        const updatePath = `weeklySchedules.${weekIndex}.${dayOfWeek}`;
+
+        // Link the workout to the workout program on the specified dayOfWeek
+        const updatedProgram = await WorkoutProgram.findByIdAndUpdate(
             programId,
-            { $push: { workouts: newWorkout._id } },
-            { new: true, useFindAndModify: false }
+            { $push: { [updatePath]: newWorkout._id } },
+            { new: true }
         );
+        logger.info("updated program:", updatedProgram)
 
         // Link the workout to the user
         await User.findByIdAndUpdate(
@@ -50,6 +65,7 @@ exports.createEmptyWorkout = async (req, res) => {
 
 exports.updateWorkout = async (req, res) => {
     const workoutId = req.params.workoutId;
+    logger.log("Updating workout " + workoutId)
     const updatedWorkoutData = req.body;
 
     try {
@@ -104,7 +120,7 @@ exports.deleteWorkout = async (req, res) => {
 
 exports.updateWorkout = async (req, res) => {
     const workoutId = req.params.workoutId;
-    logger.info(workoutId)
+    logger.info("updating workout with id ",workoutId)
     const { name, description } = req.body; // Destructure only the needed fields
     try {
         const updatedWorkout = await Workout.findByIdAndUpdate(

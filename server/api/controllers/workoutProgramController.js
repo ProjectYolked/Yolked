@@ -7,6 +7,7 @@ const logger = require('../../config/logger');
 
 // Controller to get a workout program by ID with populated workouts for each day
 exports.getWorkoutProgramById = async (req, res) => {
+    logger.info(`getting program id: ${req.params.id}`);
     try {
         const workoutProgramId = req.params.id; // Assuming the ID is passed in the URL
         let workoutProgram = await WorkoutProgram.findById(workoutProgramId);
@@ -53,7 +54,7 @@ exports.createEmptyProgram = async (req, res) => {
         });
 
         await newProgram.save();
-        logger.info(`new program ID ${newProgram._id}`);
+        logger.info(`new program created: ${newProgram}`);
 
         // Find the user by ID and update their programs list
         await User.findByIdAndUpdate(

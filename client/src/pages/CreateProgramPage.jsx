@@ -27,7 +27,9 @@ const CreateProgramPage = () => {
                         'Authorization': `Bearer ${token}`
                     }
                 });
+                console.log("raw data:", response.data)
                 const processedProgram = processProgramData(response.data);
+                console.log("processed data: {}", processedProgram)
                 setProgram(processedProgram);
             } catch (error) {
                 if (error.response && error.response.status === 403) {
@@ -38,21 +40,24 @@ const CreateProgramPage = () => {
             }
         };
 
-        fetchProgramData();
-        console.log(program)
-    }, [programId]);
+        fetchProgramData()
+        }, [programId]);
 
     const processProgramData = (data) => {
         // Iterate over weeklySchedules and instantiate Workout and Exercise objects
         console.log("running program processor for data:" + JSON.stringify(data))
         const weeklySchedules = data.weeklySchedules.map(week => {
+            console.log(`week ${JSON.stringify(week)}`)
             const processedWeek = {};
             for (const day in week) {
+                console.log(`day ${day}`)
                 processedWeek[day] = week[day].map(workoutData => {
                     const exercises = workoutData.exercises.map(exerciseData => new Exercise(exerciseData));
                     return new Workout({ ...workoutData, exercises });
                 });
+                //console.log(`processed week ${JSON.stringify(processedWeek[day])}`)
             }
+            console.log(`processed week ${JSON.stringify(processedWeek)}`)
             return processedWeek;
         });
         const workoutProgram = new WorkoutProgram({ ...data, weeklySchedules });
@@ -77,15 +82,18 @@ const CreateProgramPage = () => {
         navigate(`/create-workout/${programId}`, { state: { programData } });
     }
 
-    const goToCreateWorkout = async (index, day) => {
+    const goToCreateWorkout = async (weekIndex, day) => {
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.post(`/api/create-workout/${programId}`, {}, {
+            const response = await axios.post(`/api/create-workout/${programId}`, {
+                weekIndex: weekIndex,
+                dayOfWeek: day
+            }, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            const programData = {weekIndex: index, day: day, workout: new Workout({id: response.data.id })}
+            const programData = {weekIndex: weekIndex, day: day, workout: new Workout({id: response.data.id })}
             console.log("navigating to create a new workout with id,", programData.workout.id)
             navigate(`/create-workout/${programId}`, { state: { programData } });
         } catch (error) {
@@ -153,7 +161,7 @@ const CreateProgramPage = () => {
         }
 
         if (workoutInWeek) {
-            setIsDialogOpen({isOpen: false, weekIndex: weekIndex});
+            setIsDialogOpen({isOpen: true, weekIndex: weekIndex});
         }
         // Remove the week at the specified index
         else if (weekIndex >= 0 && weekIndex < updatedProgram.weeklySchedules.length) {
@@ -241,7 +249,7 @@ const CreateProgramPage = () => {
                                         {week[day].length === 0
                                             ? (
                                                 <Box display="flex" justifyContent="center" alignItems="center" sx={{ flexGrow: 1 }}>
-                                                    <IconButton color="primary" onClick={() => goToCreateWorkout(index, day)}>
+                                                    <IconButton color="primary" onClick={() => goToCreateWorkout(weekNumber, day)}>
                                                         <AddCircleOutlineIcon fontSize="large" />
                                                     </IconButton>
                                                 </Box>

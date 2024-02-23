@@ -1,4 +1,15 @@
-const mongoose = require('mongoose');
+const mongoose= require('mongoose');
+const { Schema } = mongoose;
+
+const workoutDaySchema = new Schema({
+    Monday: [{ type: Schema.Types.ObjectId, ref: 'Workout', _id: false }],
+    Tuesday: [{ type: Schema.Types.ObjectId, ref: 'Workout', _id: false }],
+    Wednesday: [{ type: Schema.Types.ObjectId, ref: 'Workout', _id: false }],
+    Thursday: [{ type: Schema.Types.ObjectId, ref: 'Workout', _id: false }],
+    Friday: [{ type: Schema.Types.ObjectId, ref: 'Workout', _id: false }],
+    Saturday: [{ type: Schema.Types.ObjectId, ref: 'Workout', _id: false }],
+    Sunday: [{ type: Schema.Types.ObjectId, ref: 'Workout', _id: false }]
+}, { _id: false }); // Suppress _id for each day's array of workouts
 
 const workoutProgramSchema = new mongoose.Schema({
     name: {
@@ -15,17 +26,7 @@ const workoutProgramSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    weeklySchedules: [
-        {
-            Monday: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workout' }],
-            Tuesday: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workout' }],
-            Wednesday: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workout' }],
-            Thursday: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workout' }],
-            Friday: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workout' }],
-            Saturday: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workout' }],
-            Sunday: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Workout' }]
-        }
-    ]
+    weeklySchedules: [workoutDaySchema],
 }, {
     timestamps: true
 });

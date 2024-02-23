@@ -91,7 +91,7 @@ const CreateExerciseCard = forwardRef(({ index, exerciseName, exerciseType, hand
                                 <TextField
                                     size="small"
                                     type="number"
-                                    value={set.reps}
+                                    value={set.reps ?? undefined}
                                     disabled={!editMode}
                                     onChange={(e) => handleInputChange(idx, 'reps', e.target.value)}
                                 />
@@ -100,7 +100,7 @@ const CreateExerciseCard = forwardRef(({ index, exerciseName, exerciseType, hand
                                 <TextField
                                     size="small"
                                     type="number"
-                                    value={set.weight}
+                                    value={set.weight ?? undefined}
                                     disabled={!editMode}
                                     onChange={(e) => handleInputChange(idx, 'weight', e.target.value)}
                                 />
@@ -110,7 +110,7 @@ const CreateExerciseCard = forwardRef(({ index, exerciseName, exerciseType, hand
                                     <TextField
                                         size="small"
                                         type="number"
-                                        value={set.seconds}
+                                        value={set.seconds ?? undefined}
                                         disabled={!editMode}
                                         onChange={(e) => handleInputChange(idx, 'seconds ', e.target.value)}
 
