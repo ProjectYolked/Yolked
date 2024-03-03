@@ -20,6 +20,28 @@ class Exercise {
     hasSets() {
         return this.sets.length > 0;
     }
+
+    getRepRange() {
+        if (!this.hasSets()) {
+            return ""
+        }
+        let min = 10000
+        let max = 0
+        for (const set of this.sets) {
+            if (set.reps < min) {
+                min = set.reps
+            }
+            if (set.reps > max) {
+                max = set.reps
+            }
+        }
+        if (min === max) {
+            return `${min} reps`
+        }
+        else {
+            return `${min}-${max} reps`
+        }
+    }
 }
 
 export default Exercise;

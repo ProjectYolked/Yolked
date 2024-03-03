@@ -10,6 +10,9 @@ import WorkoutProgram from "../models/WorkoutProgram.js";
 import Exercise from "../models/Exercise.js";
 import BackButton from "../components/BackButton.jsx";
 import ConfirmDialog from "../components/ConfirmDialog.jsx";
+import ExerciseTable from "../components/ExerciseTable.jsx";
+import {DAYS_OF_THE_WEEK} from "../utils/constants.js";
+import WorkoutCard from "../components/WorkoutCard.jsx";
 
 const CreateProgramPage = () => {
     const [isDialogOpen, setIsDialogOpen] = useState({isOpen: false, weekIndex: -1});
@@ -78,7 +81,7 @@ const CreateProgramPage = () => {
 
     const editExistingWorkout = (index, day, workout) => {
         const programData = {weekIndex: index, day: day, workout: workout}
-        console.log("navigating")
+        console.log("navigating to edit workout with data:" + JSON.stringify( workout))
         navigate(`/create-workout/${programId}`, { state: { programData } });
     }
 
@@ -236,27 +239,20 @@ const CreateProgramPage = () => {
                             title="Confirm Delete"
                             message="Are you sure you want to delete this week of workouts?"
                         />
-
-                        {/* Placeholder for workout cards */}
                         <Grid container spacing={2}>
-                            {Object.keys(week).map((day, index) => (
-                                <Grid item key={index} xs={12} sm={6} md={4} lg={12/7}>
-                                    <Paper style={{ height: 400, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                        <Typography variant="h6" style={{ marginTop: '10px' }}>
-                                            {day}
-                                        </Typography>
+                            {DAYS_OF_THE_WEEK.map((day, index) => (
+                                <Grid item key={`${week}-${index}`} xs={12} sm={6} md={4} lg={3} xl = {12/7} >
+                                    <Typography variant="h5" align={"center"} style={{ marginTop: '10px'}}>
+                                        {day}
+                                    </Typography>
 
-                                        {week[day].length === 0
-                                            ? (
-                                                <Box display="flex" justifyContent="center" alignItems="center" sx={{ flexGrow: 1 }}>
-                                                    <IconButton color="primary" onClick={() => goToCreateWorkout(weekNumber, day)}>
-                                                        <AddCircleOutlineIcon fontSize="large" />
-                                                    </IconButton>
-                                                </Box>
-                                            )
-                                            : null
-                                        }
-                                    </Paper>
+                                    {week[day].map(workout =>
+                                        <>
+                                            <WorkoutCard day={day} workout={workout} weekIndex = {weekNumber} callback={editExistingWorkout}/>
+                                            <div style={{paddingTop:'25px'}}></div>
+                                        </>
+                                    )}
+                                    <WorkoutCard day={day} workout={undefined} weekIndex = {weekNumber} callback={goToCreateWorkout}/>
                                 </Grid>
                             ))}
                         </Grid>
