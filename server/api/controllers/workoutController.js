@@ -65,13 +65,18 @@ exports.createEmptyWorkout = async (req, res) => {
 
 exports.updateWorkout = async (req, res) => {
     const workoutId = req.params.workoutId;
-    logger.log("Updating workout " + workoutId)
-    const updatedWorkoutData = req.body;
+    logger.info("Updating workout " + workoutId);
+    let updatedWorkoutData = req.body;
+
+    // Assuming updatedWorkoutData has a property 'exercises' that is an array of exercise objects
+    if (updatedWorkoutData.exercises && updatedWorkoutData.exercises.length > 0) {
+        updatedWorkoutData.exercises = updatedWorkoutData.exercises.map(exercise => exercise.id);
+    }
 
     try {
         const workout = await Workout.findByIdAndUpdate(workoutId, updatedWorkoutData, {
-            new: true, // Returns the updated document
-            runValidators: true // Runs validators on the updated data
+            new: true,
+            runValidators: true
         });
 
         if (!workout) {
@@ -81,12 +86,15 @@ exports.updateWorkout = async (req, res) => {
         res.json(workout);
     } catch (error) {
         if (error.name === 'ValidationError') {
+            logger.info("Validation Error updating workout: " + error.message);
             res.status(400).json({message: error.message});
         } else {
+            logger.info("Internal Error updating workout: " + error.message);
             res.status(500).json({message: 'Error updating workout'});
         }
     }
-}
+};
+
 
 exports.deleteWorkout = async (req, res) => {
     const { workoutId, programId } = req.params;
@@ -114,23 +122,6 @@ exports.deleteWorkout = async (req, res) => {
         res.status(200).send(`Workout and its exercises successfully deleted`);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Server error');
-    }
-}
-
-exports.updateWorkout = async (req, res) => {
-    const workoutId = req.params.workoutId;
-    logger.info("updating workout with id ",workoutId)
-    const { name, description } = req.body; // Destructure only the needed fields
-    try {
-        const updatedWorkout = await Workout.findByIdAndUpdate(
-            workoutId,
-            { name, description }, // Update only these fields
-            { new: true }
-        );
-        res.json(updatedWorkout);
-    } catch (error) {
-        logger.error(error);
         res.status(500).send('Server error');
     }
 }

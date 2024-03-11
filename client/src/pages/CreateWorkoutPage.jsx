@@ -20,7 +20,6 @@ const CreateWorkoutPage = () => {
     const { programId } = useParams();
     const location = useLocation();
     const { programData } = location.state || {};
-    console.log(programData)
 
     useEffect(() => {
         if (programData === undefined) {
@@ -41,9 +40,11 @@ const CreateWorkoutPage = () => {
 
     // Update refs array whenever the workout.exercises array changes
     useEffect(() => {
+        console.log("USE EFFECT CALLED")
         // Adjust the refs array to match the number of exercises
+        console.log('Updating exercise refs:', exerciseRefs)
         exerciseRefs.current = workout.exercises.map((_, i) => exerciseRefs.current[i] || createRef());
-    }, [workout.exercises]);
+    }, [workout]);
 
     if (!isAuthorized) {
         return <div>Error: You do not own the workout program you are trying to modify</div>;
@@ -123,7 +124,7 @@ const CreateWorkoutPage = () => {
 
     const updateWorkout = async() => {
         const token = localStorage.getItem('token');
-        console.log(JSON.stringify(workout))
+        console.log("updating workout with this data:",JSON.stringify(workout))
         try {
             await fetch(`/api/workout/${workout.id}`, {
                 method: 'PUT',
@@ -134,12 +135,12 @@ const CreateWorkoutPage = () => {
                 body: JSON.stringify(workout)
             });
         } catch (error) {
-            console.error('Error removing and deleting exercise:', error);
+            console.error('Error updating workout with id :',workout.id, "error: ", error);
         }
     };
 
     const handleSelectExercise = async (exercise) => {
-        console.log(exercise)
+        console.log("added exercise:", exercise)
         const updatedWorkout = new Workout({...workout});
         const parseExercise = new Exercise({name: exercise.title, sets: [], muscleGroups: []})
         parseExercise.id = await postExerciseAndUpdateWorkout(updatedWorkout.id, parseExercise)
@@ -150,17 +151,22 @@ const CreateWorkoutPage = () => {
     };
 
     const handlePublishExercise = async (exercise, exerciseIndex) => {
-        console.log(exercise);
+        console.log("existing data at exercise index ", exerciseIndex, ":", workout.exercises[exerciseIndex])
         exercise.id = workout.exercises[exerciseIndex].id;
+        console.log("exercise data being published: ", exercise);
         const updatedWorkout = new Workout({...workout});
         updatedWorkout.exercises[exerciseIndex] = exercise;
+        setWorkout(updatedWorkout);
 
         await updateExercise(exercise);
     };
 
     const handlePublishWorkout = async () => {
+        console.log('publishing workouts, and exerciseRefs.current:', exerciseRefs.current)
         exerciseRefs.current.forEach(ref => {
+            console.log(ref)
             if (ref.current && ref.current.editMode) {
+                console.log('Finishing editing exercise');
                 ref.current.triggerDone();
             }
         });
@@ -232,7 +238,9 @@ const CreateWorkoutPage = () => {
                         ref={exerciseRefs[exerciseIndex]}
                         onExerciseComplete={handlePublishExercise}
                         handleRemoveExercise={handleRemoveExercise}
-                        index={exerciseIndex} exerciseName={exercise.name}
+                        index={exerciseIndex}
+                        exerciseName={exercise.name}
+                        exerciseSets={exercise.sets}
                         exerciseType={"weight"}>
                     </CreateExerciseCard>
                 </Paper>

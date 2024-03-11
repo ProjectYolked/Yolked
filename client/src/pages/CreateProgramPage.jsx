@@ -30,9 +30,9 @@ const CreateProgramPage = () => {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                console.log("raw data:", response.data)
+                console.log("raw program data:", response.data)
                 const processedProgram = processProgramData(response.data);
-                console.log("processed data: {}", processedProgram)
+                console.log("processed program data: {}", processedProgram)
                 setProgram(processedProgram);
             } catch (error) {
                 if (error.response && error.response.status === 403) {
@@ -48,22 +48,18 @@ const CreateProgramPage = () => {
 
     const processProgramData = (data) => {
         // Iterate over weeklySchedules and instantiate Workout and Exercise objects
-        console.log("running program processor for data:" + JSON.stringify(data))
         const weeklySchedules = data.weeklySchedules.map(week => {
-            console.log(`week ${JSON.stringify(week)}`)
             const processedWeek = {};
             for (const day in week) {
-                console.log(`day ${day}`)
                 processedWeek[day] = week[day].map(workoutData => {
-                    const exercises = workoutData.exercises.map(exerciseData => new Exercise(exerciseData));
-                    return new Workout({ ...workoutData, exercises });
+                    const exercises = workoutData.exercises.map(exerciseData => new Exercise({id: exerciseData._id, ...exerciseData}));
+                    return new Workout({ id: workoutData._id, ...workoutData, exercises });
                 });
                 //console.log(`processed week ${JSON.stringify(processedWeek[day])}`)
             }
-            console.log(`processed week ${JSON.stringify(processedWeek)}`)
             return processedWeek;
         });
-        const workoutProgram = new WorkoutProgram({ ...data, weeklySchedules });
+        const workoutProgram = new WorkoutProgram({ id:data._id, ...data, weeklySchedules });
         if(weeklySchedules.length === 0) {
             workoutProgram.weeklySchedules.push(workoutProgram.createEmptyWeek())
         }
@@ -96,6 +92,7 @@ const CreateProgramPage = () => {
                     'Authorization': `Bearer ${token}`
                 }
             });
+            console.log("response data workout id:", response.data.id)
             const programData = {weekIndex: weekIndex, day: day, workout: new Workout({id: response.data.id })}
             console.log("navigating to create a new workout with id,", programData.workout.id)
             navigate(`/create-workout/${programId}`, { state: { programData } });

@@ -17,8 +17,9 @@ import Set from "../models/Set.js";
 import Exercise from "../models/Exercise.js";
 import EditIcon from "@mui/icons-material/Edit";
 
-const CreateExerciseCard = forwardRef(({ index, exerciseName, exerciseType, handleRemoveExercise, onExerciseComplete }, ref) => {
-    const [sets, setSets] = useState([]);
+const CreateExerciseCard = forwardRef(({ index, exerciseName, exerciseSets, exerciseType, handleRemoveExercise, onExerciseComplete }, ref) => {
+    console.log("ref from CreateExerciseCard: ", ref);
+    const [sets, setSets] = useState(exerciseSets);
     const [editMode, setEditMode] = useState(true);
 
     const addSet = () => {
@@ -91,7 +92,7 @@ const CreateExerciseCard = forwardRef(({ index, exerciseName, exerciseType, hand
                                 <TextField
                                     size="small"
                                     type="number"
-                                    value={set.reps ?? undefined}
+                                    value={set.reps ?? 0}
                                     disabled={!editMode}
                                     onChange={(e) => handleInputChange(idx, 'reps', e.target.value)}
                                 />
@@ -100,7 +101,7 @@ const CreateExerciseCard = forwardRef(({ index, exerciseName, exerciseType, hand
                                 <TextField
                                     size="small"
                                     type="number"
-                                    value={set.weight ?? undefined}
+                                    value={set.weight ?? 0}
                                     disabled={!editMode}
                                     onChange={(e) => handleInputChange(idx, 'weight', e.target.value)}
                                 />
@@ -110,7 +111,7 @@ const CreateExerciseCard = forwardRef(({ index, exerciseName, exerciseType, hand
                                     <TextField
                                         size="small"
                                         type="number"
-                                        value={set.seconds ?? undefined}
+                                        value={set.seconds ?? 0}
                                         disabled={!editMode}
                                         onChange={(e) => handleInputChange(idx, 'seconds ', e.target.value)}
 
