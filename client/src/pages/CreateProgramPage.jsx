@@ -111,18 +111,25 @@ const CreateProgramPage = () => {
         setProgram(updatedProgram);
     };
 
-    const deleteWorkout = async (workoutId) => {
+    const deleteWorkout = async (workoutId, week, day, render = true) => {
         const token = localStorage.getItem('token');
         try {
             const response = await fetch(`/api/workout/${workoutId}/${programId}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ day, week })
             });
 
             if (response.ok) {
                 console.log('Workout deleted successfully');
+                if (render) {
+                    const updatedProgram = new WorkoutProgram({...program});
+                    updatedProgram.weeklySchedules[week][day] = updatedProgram.weeklySchedules[week][day].filter(workout => workout.id !== workoutId);
+                    setProgram(updatedProgram);
+                }
             } else {
                 console.error('Failed to delete workout');
             }
@@ -137,11 +144,12 @@ const CreateProgramPage = () => {
 
     const handleDialogConfirm = () => {
         const updatedProgram = new WorkoutProgram({...program});
+        const weekIndex = isDialogOpen.weekIndex;
         // Remove the week at the specified index
-        if (isDialogOpen.weekIndex >= 0 && isDialogOpen.weekIndex < updatedProgram.weeklySchedules.length) {
-            for (const day in updatedProgram.weeklySchedules[isDialogOpen.weekIndex]) {
-                for (const workout of updatedProgram.weeklySchedules[isDialogOpen.weekIndex][day]) {
-                    deleteWorkout(workout.id);
+        if (weekIndex >= 0 && weekIndex < updatedProgram.weeklySchedules.length) {
+            for (const day in updatedProgram.weeklySchedules[weekIndex]) {
+                for (const workout of updatedProgram.weeklySchedules[weekIndex][day]) {
+                    deleteWorkout(workout.id, weekIndex, day, false);
                 }
             }
             updatedProgram.weeklySchedules.splice(isDialogOpen.weekIndex, 1);
@@ -245,11 +253,11 @@ const CreateProgramPage = () => {
 
                                     {week[day].map(workout =>
                                         <>
-                                            <WorkoutCard day={day} workout={workout} weekIndex = {weekNumber} callback={editExistingWorkout}/>
+                                            <WorkoutCard day={day} workout={workout} weekIndex = {weekNumber} editCallback={editExistingWorkout} deleteCallback={deleteWorkout}/>
                                             <div style={{paddingTop:'25px'}}></div>
                                         </>
                                     )}
-                                    <WorkoutCard day={day} workout={undefined} weekIndex = {weekNumber} callback={goToCreateWorkout}/>
+                                    <WorkoutCard day={day} workout={undefined} weekIndex = {weekNumber} editCallback={goToCreateWorkout} deleteCallback={deleteWorkout}/>
                                 </Grid>
                             ))}
                         </Grid>

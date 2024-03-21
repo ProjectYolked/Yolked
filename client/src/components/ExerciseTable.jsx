@@ -25,7 +25,7 @@ const ExerciseTable = ({ workout, extendedView }) => {
                 <TableBody>
                     {workout.exercises.map((exercise, index) => (
                         <>
-                            <TableRow key={index} sx={{height: '1px'}}>
+                            <TableRow sx={{height: '1px'}}>
                                 <TableCell align="left" sx={{...cellStyle, fontWeight:'bold', paddingTop: '16px'}}>
                                     {exercise.name}
                                 </TableCell>

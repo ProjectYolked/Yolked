@@ -98,6 +98,8 @@ exports.updateWorkout = async (req, res) => {
 
 exports.deleteWorkout = async (req, res) => {
     const { workoutId, programId } = req.params;
+    const { day, week } = req.body;
+    logger.info(req.body)
 
     try {
         // Find the workout to get its exercises
@@ -109,22 +111,31 @@ exports.deleteWorkout = async (req, res) => {
         // Delete all exercises associated with the workout
         await Exercise.deleteMany({ _id: { $in: workout.exercises } });
 
-        // Remove the workout from the workout program
-        await WorkoutProgram.findByIdAndUpdate(
+        // Remove the workout from the corresponding day's array in weeklySchedules
+        const updatedProgram = await WorkoutProgram.findByIdAndUpdate(
             programId,
-            { $pull: { workouts: workoutId } },
-            { useFindAndModify: false }
+            {
+                $pull: {
+                    [`weeklySchedules.${week}.${day}`]: workoutId
+                }
+            },
+            {
+                useFindAndModify: false
+            }
         );
+        logger.info('Updated weeklySchedules:', updatedProgram);
+        logger.info("week, day", week, day);
+
 
         // Delete the workout
-        await workout.remove();
+        await Workout.findByIdAndDelete(workoutId);
 
         res.status(200).send(`Workout and its exercises successfully deleted`);
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         res.status(500).send('Server error');
     }
-}
+};
 
 exports.completeWorkout = async (req,  res) => {
     logger.info(`Completing workout for user with id ${req.user.id} and workout id ${req.params.workoutId}`);

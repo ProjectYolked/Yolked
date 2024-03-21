@@ -1,9 +1,9 @@
 class Set {
     constructor(data) {
-        this.type = data.type || '';
-        this.reps = data.reps || null;
-        this.weight = data.weight || null;
-        this.seconds = data.seconds || null;
+        this.type = data.type ?? '';
+        this.reps = data.reps ?? null;
+        this.weight = data.weight ?? null;
+        this.seconds = data.seconds ?? null;
     }
 
     displayInfo() {

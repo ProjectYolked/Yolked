@@ -7,6 +7,7 @@ import Exercise from "../models/Exercise.js";
 import CreateExerciseModal from "../components/CreateExerciseModal.jsx";
 import BackButton from "../components/BackButton.jsx";
 import CreateExerciseCard from "../components/CreateExerciseCard.jsx";
+import Set from "../models/Set.js";
 
 const CreateWorkoutPage = () => {
     const navigate = useNavigate();
@@ -33,14 +34,6 @@ const CreateWorkoutPage = () => {
         // You can use weekIndex and day here as needed
 
     }, [programData]); // Dependency array includes programData
-
-    // Update refs array whenever the workout.exercises array changes
-    useEffect(() => {
-        console.log("USE EFFECT CALLED")
-        // Adjust the refs array to match the number of exercises
-        console.log('Updating exercise refs:', exerciseRefs)
-        exerciseRefs.current = workout.exercises.map((_, i) => exerciseRefs.current[i] || createRef());
-    }, [workout]);
 
     exerciseRefs.current = useMemo(() => {
         console.log("useMemo called");
@@ -144,7 +137,8 @@ const CreateWorkoutPage = () => {
     const handleSelectExercise = async (exercise) => {
         console.log("added exercise:", exercise)
         const updatedWorkout = new Workout({...workout});
-        const parseExercise = new Exercise({name: exercise.title, sets: [], muscleGroups: []})
+        const newSet = new Set({ type: "weightlifting", reps: 0, weight: 0, seconds: 0 });
+        const parseExercise = new Exercise({name: exercise.title, sets: [newSet], muscleGroups: []})
         parseExercise.id = await postExerciseAndUpdateWorkout(updatedWorkout.id, parseExercise)
         console.log(parseExercise.id)
         updatedWorkout.exercises.push(parseExercise)
