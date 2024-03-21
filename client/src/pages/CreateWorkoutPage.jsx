@@ -1,12 +1,8 @@
-import React, {createRef, useEffect, useRef, useState} from 'react';
-import {Typography, TextField, IconButton, Grid, Paper, Box, Button} from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import React, {createRef, useEffect, useMemo, useRef, useState} from 'react';
+import {Button, Grid, Paper, TextField, Typography} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import axios from "axios";
 import Workout from "../models/Workout.js";
-import WorkoutProgram from "../models/WorkoutProgram.js";
 import Exercise from "../models/Exercise.js";
 import CreateExerciseModal from "../components/CreateExerciseModal.jsx";
 import BackButton from "../components/BackButton.jsx";
@@ -44,6 +40,12 @@ const CreateWorkoutPage = () => {
         // Adjust the refs array to match the number of exercises
         console.log('Updating exercise refs:', exerciseRefs)
         exerciseRefs.current = workout.exercises.map((_, i) => exerciseRefs.current[i] || createRef());
+    }, [workout]);
+
+    exerciseRefs.current = useMemo(() => {
+        console.log("useMemo called");
+        console.log('Updating exercise refs:', exerciseRefs);
+        return workout.exercises.map((_, i) => exerciseRefs.current[i] || createRef());
     }, [workout]);
 
     if (!isAuthorized) {
@@ -235,7 +237,7 @@ const CreateWorkoutPage = () => {
                 <Paper key={exerciseIndex} style={{ paddingLeft: 25, paddingTop: 10, paddingBottom: 10, paddingRight: 10, marginTop: 10 }}>
                     <CreateExerciseCard
                         key={exerciseIndex}
-                        ref={exerciseRefs[exerciseIndex]}
+                        ref={exerciseRefs.current[exerciseIndex]}
                         onExerciseComplete={handlePublishExercise}
                         handleRemoveExercise={handleRemoveExercise}
                         index={exerciseIndex}
